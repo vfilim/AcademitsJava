@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AcademitsJava.iml" filepath="$PROJECT_DIR$/.idea/AcademitsJava.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lambdas/Lambdas.iml" filepath="$PROJECT_DIR$/Lambdas/Lambdas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Csv/csv.iml" filepath="$PROJECT_DIR$/Csv/csv.iml" />
     </modules>
   </component>
 </project>
