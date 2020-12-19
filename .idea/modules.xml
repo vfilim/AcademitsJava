@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AcademitsJava.iml" filepath="$PROJECT_DIR$/.idea/AcademitsJava.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Csv/csv.iml" filepath="$PROJECT_DIR$/Csv/csv.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lambdas/Lambdas.iml" filepath="$PROJECT_DIR$/Lambdas/Lambdas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Matrix/Matrix.iml" filepath="$PROJECT_DIR$/Matrix/Matrix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Vector/Vector.iml" filepath="$PROJECT_DIR$/Vector/Vector.iml" />
       <module fileurl="file://$PROJECT_DIR$/Csv/csv.iml" filepath="$PROJECT_DIR$/Csv/csv.iml" />
     </modules>
   </component>

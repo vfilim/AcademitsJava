@@ -5,10 +5,11 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.io.PrintWriter;
 
-public class Main {
 
+public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(new FileInputStream("Csv\\input.txt"));
+
              PrintWriter writer = new PrintWriter("Csv\\output.txt")) {
             StringBuilder htmlCode = new StringBuilder();
 
@@ -22,6 +23,10 @@ public class Main {
                 String currentRow = scanner.nextLine();
 
                 int currentRowSize = currentRow.length();
+
+                if (currentRowSize == 0 && isRow){
+                    htmlCode.append("<br/>");
+                }
 
                 for (int i = 0; i < currentRowSize; i++) {
                     char currentCharacter = currentRow.charAt(i);
@@ -58,7 +63,7 @@ public class Main {
                         }
                     } else {
                         if (currentCharacter == '"') {
-                            if (i == currentRowSize - 1){
+                            if (i == currentRowSize - 1) {
                                 htmlCode.append("</td></tr>\r\n");
 
                                 isDetail = false;
