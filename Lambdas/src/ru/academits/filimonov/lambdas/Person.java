@@ -1,8 +1,8 @@
 package ru.academits.filimonov.lambdas;
 
 public class Person {
-    private String name;
-    private int age;
+    private final String name;
+    private final int age;
 
     public String getName() {
         return name;
