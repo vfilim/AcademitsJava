@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Person> personsList = new ArrayList<>(Arrays.asList(
+        List<Person> personsList = Arrays.asList(
                 new Person("Peter", 23),
                 new Person("Alice", 26),
                 new Person("John", 24),
@@ -19,7 +19,7 @@ public class Main {
                 new Person("Mary", 60),
                 new Person("Alice", 12),
                 new Person("Andrew", 13)
-        ));
+        );
 
         String uniqueNamesString = personsList.stream()
                 .map(Person::getName)
@@ -50,13 +50,13 @@ public class Main {
 
         List<String> chosenAgePeopleNameList = personsList.stream()
                 .filter(x -> x.getAge() >= 20 && x.getAge() <= 45)
-                .sorted(Comparator.comparingInt(Person::getAge))
+                .sorted(Comparator.comparingInt(Person::getAge).reversed())
                 .map(Person::getName)
                 .collect(Collectors.toList());
 
-        System.out.println("The list of people 20-45 year old in ascendant order:");
+        System.out.println("The list of people 20-45 year old in descendant order:");
 
-        for (var e : chosenAgePeopleNameList) {
+        for (String e : chosenAgePeopleNameList) {
             System.out.println(e);
         }
     }
