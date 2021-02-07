@@ -1,8 +1,16 @@
-package ru.academits.filimonov.list;
+package ru.academits.filimonov.listMain;
+
+import ru.academits.filimonov.list.SinglyLinkedList;
 
 public class Test {
     public static void main(String[] ags) {
-        SinglyLinkedList<Integer> list = new SinglyLinkedList<Integer>();
+        SinglyLinkedList<Integer> list = new SinglyLinkedList<>();
+
+        try {
+            list.getFirst();
+        } catch (NullPointerException e) {
+            System.out.println("NPE is thrown correctly, let's add elements");
+        }
 
         for (int i = 9; i >= 0; i--) {
             list.addFirst(i);
@@ -15,7 +23,7 @@ public class Test {
         System.out.println("Let's change third element to 20, it was " + list.setData(2, 20));
         System.out.println("Now it is " + list.getData(2));
 
-        list.insertData(4, 40);
+        list.add(4, 40);
         System.out.println("We inserted element 40 on index 4, now it is " + list.getData(4) + ", the next element is " + list.getData(5));
 
         System.out.println("Let's remove the element on index 5, it was " + list.remove(5) + ", now it is " + list.getData(5));
@@ -33,7 +41,7 @@ public class Test {
 
         System.out.println(list);
 
-        var stringsList = new SinglyLinkedList<String>();
+        SinglyLinkedList<String> stringsList = new SinglyLinkedList<>();
 
         stringsList.addFirst("last");
         stringsList.addFirst(null);
@@ -46,11 +54,10 @@ public class Test {
 
         System.out.println(stringsList);
 
-        var listCopy = list.getCopy();
+        SinglyLinkedList<Integer> listCopy = list.getCopy();
 
         System.out.println("Let's print numbers list copy");
 
         System.out.println(listCopy);
     }
 }
-

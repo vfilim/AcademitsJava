@@ -1,8 +1,7 @@
 package ru.academits.filimonov.list;
 
-public class ListItem<T> {
+class ListItem<T> {
     private T data;
-
     private ListItem<T> next;
 
     public T getData() {
@@ -28,5 +27,9 @@ public class ListItem<T> {
     public ListItem(T data, ListItem<T> next) {
         this.data = data;
         this.next = next;
+    }
+
+    public String toString() {
+        return data.toString();
     }
 }

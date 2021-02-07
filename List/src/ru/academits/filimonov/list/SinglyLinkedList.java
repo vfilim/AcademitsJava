@@ -1,35 +1,29 @@
 package ru.academits.filimonov.list;
 
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
 public class SinglyLinkedList<T> {
     private ListItem<T> head;
-
     private int count;
+
+    public SinglyLinkedList() {
+    }
 
     public int getCount() {
         return count;
     }
 
-    public SinglyLinkedList() {
-    }
-
-    public SinglyLinkedList(T headData) {
-        head = new ListItem<T>(headData);
-
-        count = 1;
-    }
-
     public T getFirst() {
+        if (Objects.equals(head, null)) {
+            throw new NullPointerException("Can't get first element, because the list is empty");
+        }
+
         return head.getData();
     }
 
-    private ListItem<T> getNode(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("The index (" + index + ") can't be < 0");
-        }
-
-        if (index > count - 1) {
-            throw new IndexOutOfBoundsException("The index (" + index + ") can't be more than list elements count (" + count + ").");
-        }
+    private ListItem<T> getListItem(int index) {
+        checkIndexExceptions(index);
 
         ListItem<T> currentItem = head;
 
@@ -41,11 +35,11 @@ public class SinglyLinkedList<T> {
     }
 
     public T getData(int index) {
-        return getNode(index).getData();
+        return getListItem(index).getData();
     }
 
     public T setData(int index, T newData) {
-        ListItem<T> item = getNode(index);
+        ListItem<T> item = getListItem(index);
 
         T oldData = item.getData();
 
@@ -55,19 +49,13 @@ public class SinglyLinkedList<T> {
     }
 
     public T remove(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("The index (" + index + ") can't be < 0");
-        }
-
-        if (index > count - 1) {
-            throw new IndexOutOfBoundsException("The index (" + index + ") can't be more than list elements count (" + count + ").");
-        }
+        checkIndexExceptions(index);
 
         if (index == 0) {
             return removeHead();
         }
 
-        ListItem<T> previousItem = getNode(index - 1);
+        ListItem<T> previousItem = getListItem(index - 1);
 
         T removedData = previousItem.getNext().getData();
 
@@ -81,16 +69,10 @@ public class SinglyLinkedList<T> {
     public void addFirst(T data) {
         count++;
 
-        if (count == 0) {
-            head = new ListItem<T>(data);
-        } else {
-            ListItem<T> newHead = new ListItem<T>(data, head);
-
-            head = newHead;
-        }
+        head = new ListItem<>(data, head);
     }
 
-    public void insertData(int index, T data) {
+    public void add(int index, T data) {
         if (index < 0) {
             throw new IndexOutOfBoundsException("The index can't be < 0");
         }
@@ -105,9 +87,9 @@ public class SinglyLinkedList<T> {
             return;
         }
 
-        ListItem<T> previousItem = getNode(index - 1);
+        ListItem<T> previousItem = getListItem(index - 1);
 
-        ListItem<T> newItem = new ListItem<T>(data, previousItem.getNext());
+        ListItem<T> newItem = new ListItem<>(data, previousItem.getNext());
 
         previousItem.setNext(newItem);
 
@@ -115,15 +97,25 @@ public class SinglyLinkedList<T> {
     }
 
     public boolean removeByData(T data) {
-        ListItem<T> currentItem = head;
+        if (Objects.equals(head.getData(), data)) {
+            removeHead();
 
-        for (int i = 0; i < count; i++) {
-            if (data == null ? getData(i) == null : data.equals(getData(i))) {
-                remove(i);
+            return true;
+        }
+
+        ListItem<T> currentItem = head.getNext();
+        ListItem<T> previousItem = head;
+
+        for (int i = 1; i < count; i++) {
+            if (Objects.equals(currentItem.getData(), data)) {
+                previousItem.setNext(currentItem.getNext());
+
+                count--;
 
                 return true;
             }
 
+            previousItem = currentItem;
             currentItem = currentItem.getNext();
         }
 
@@ -132,16 +124,16 @@ public class SinglyLinkedList<T> {
 
     public T removeHead() {
         if (count == 0) {
-            throw new IllegalStateException("The list is empty!");
+            throw new NoSuchElementException("The list is empty!");
         }
 
-        T headData = head.getData();
+        T removedData = head.getData();
 
         head = head.getNext();
 
         count--;
 
-        return headData;
+        return removedData;
     }
 
     public void reverse() {
@@ -164,28 +156,57 @@ public class SinglyLinkedList<T> {
     }
 
     public SinglyLinkedList<T> getCopy() {
+        SinglyLinkedList<T> listCopy = new SinglyLinkedList<>();
+        listCopy.addFirst(head.getData());
+
         ListItem<T> currentItem = head;
+        ListItem<T> currentItemCopy = listCopy.head;
 
-        SinglyLinkedList<T> listCopy = new SinglyLinkedList<T>();
-
-        for (int i = 0; i < count; i++) {
-            listCopy.insertData(i, currentItem.getData());
-
+        for (int i = 1; i < count; i++) {
             currentItem = currentItem.getNext();
+
+            currentItemCopy.setNext(new ListItem<>(currentItem.getData()));
+
+            listCopy.count++;
+
+            currentItemCopy = currentItemCopy.getNext();
         }
 
         return listCopy;
     }
 
-    public String toString() {
-        StringBuilder string = new StringBuilder();
-
-        for (int i = 0; i < count - 1; i++) {
-            string.append(getData(i) + ", ");
+    private void checkIndexExceptions(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("The index (" + index + ") can't be < 0");
         }
 
-        string.append(getData(count - 1));
+        if (index >= count) {
+            throw new IndexOutOfBoundsException("The index (" + index + ") must be less than list elements count (" + count + ").");
+        }
+    }
 
-        return string.toString();
+    public String toString() {
+        if (count == 0) {
+            return "[]";
+        }
+
+        StringBuilder listElementsSequence = new StringBuilder();
+
+        ListItem<T> currentItem = head;
+
+        listElementsSequence.append("[");
+
+        for (int i = 0; i < count - 1; i++) {
+            listElementsSequence.append(currentItem.getData());
+            listElementsSequence.append(", ");
+
+            currentItem = currentItem.getNext();
+        }
+
+        listElementsSequence.append(currentItem.getData());
+
+        listElementsSequence.append("]");
+
+        return listElementsSequence.toString();
     }
 }
