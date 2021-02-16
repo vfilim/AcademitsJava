@@ -15,15 +15,15 @@ public class SinglyLinkedList<T> {
     }
 
     public T getFirst() {
-        if (Objects.equals(head, null)) {
-            throw new NullPointerException("Can't get first element, because the list is empty");
+        if (head == null) {
+            throw new NoSuchElementException("Can't get first element, because the list is empty");
         }
 
         return head.getData();
     }
 
     private ListItem<T> getListItem(int index) {
-        checkIndexExceptions(index);
+        checkIndex(index);
 
         ListItem<T> currentItem = head;
 
@@ -49,10 +49,10 @@ public class SinglyLinkedList<T> {
     }
 
     public T remove(int index) {
-        checkIndexExceptions(index);
+        checkIndex(index);
 
         if (index == 0) {
-            return removeHead();
+            return removeFirst();
         }
 
         ListItem<T> previousItem = getListItem(index - 1);
@@ -74,7 +74,7 @@ public class SinglyLinkedList<T> {
 
     public void add(int index, T data) {
         if (index < 0) {
-            throw new IndexOutOfBoundsException("The index can't be < 0");
+            throw new IndexOutOfBoundsException("The index can't be < 0, it is " + index);
         }
 
         if (index > count) {
@@ -97,8 +97,12 @@ public class SinglyLinkedList<T> {
     }
 
     public boolean removeByData(T data) {
+        if (count == 0) {
+            return false;
+        }
+
         if (Objects.equals(head.getData(), data)) {
-            removeHead();
+            removeFirst();
 
             return true;
         }
@@ -122,7 +126,7 @@ public class SinglyLinkedList<T> {
         return false;
     }
 
-    public T removeHead() {
+    public T removeFirst() {
         if (count == 0) {
             throw new NoSuchElementException("The list is empty!");
         }
@@ -137,13 +141,12 @@ public class SinglyLinkedList<T> {
     }
 
     public void reverse() {
-        ListItem<T> oldNext;
         ListItem<T> newNext = null;
 
         ListItem<T> currentItem = head;
 
         for (int i = 0; i < count; i++) {
-            oldNext = currentItem.getNext();
+            ListItem<T> oldNext = currentItem.getNext();
 
             currentItem.setNext(newNext);
 
@@ -157,6 +160,11 @@ public class SinglyLinkedList<T> {
 
     public SinglyLinkedList<T> getCopy() {
         SinglyLinkedList<T> listCopy = new SinglyLinkedList<>();
+
+        if (count == 0) {
+            return listCopy;
+        }
+
         listCopy.addFirst(head.getData());
 
         ListItem<T> currentItem = head;
@@ -167,17 +175,17 @@ public class SinglyLinkedList<T> {
 
             currentItemCopy.setNext(new ListItem<>(currentItem.getData()));
 
-            listCopy.count++;
-
             currentItemCopy = currentItemCopy.getNext();
         }
+
+        listCopy.count = count;
 
         return listCopy;
     }
 
-    private void checkIndexExceptions(int index) {
+    private void checkIndex(int index) {
         if (index < 0) {
-            throw new IndexOutOfBoundsException("The index (" + index + ") can't be < 0");
+            throw new IndexOutOfBoundsException("The index (" + index + ") can't be < 0, it is " + index);
         }
 
         if (index >= count) {

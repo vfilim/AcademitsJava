@@ -1,6 +1,8 @@
-package ru.academits.filimonov.listMain;
+package ru.academits.filimonov.list_main;
 
 import ru.academits.filimonov.list.SinglyLinkedList;
+
+import java.util.NoSuchElementException;
 
 public class Test {
     public static void main(String[] ags) {
@@ -8,8 +10,8 @@ public class Test {
 
         try {
             list.getFirst();
-        } catch (NullPointerException e) {
-            System.out.println("NPE is thrown correctly, let's add elements");
+        } catch (NoSuchElementException e) {
+            System.out.println("NoSuchElementException is thrown correctly, let's add elements");
         }
 
         for (int i = 9; i >= 0; i--) {
