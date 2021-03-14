@@ -1,4 +1,7 @@
-package ru.academits.filimonov.matrix;
+package ru.academits.filimonov.matrixMain;
+
+import ru.academits.filimonov.matrix.Matrix;
+import ru.academits.filimonov.vector.Vector;
 
 public class Test {
     public static void main(String[] args) {
@@ -15,6 +18,7 @@ public class Test {
 
         Matrix matrix2 = new Matrix(vector1, vector2);
 
+
         System.out.println(matrix2);
 
         Matrix matrix3 = new Matrix(new double[][]{
@@ -23,7 +27,7 @@ public class Test {
                 {7, 8, 9}
         });
 
-        Vector vectorMultiplication = matrix3.multiplyOnVector(vector1);
+        Vector vectorMultiplication = matrix3.multiplyByVector(vector1);
 
         System.out.println(vectorMultiplication);
 
@@ -37,7 +41,7 @@ public class Test {
                 {15, 16, 17, 18}
         });
 
-        System.out.println(Matrix.getMatrixMultiplication(multiplier1, multiplier2));
+        System.out.println(Matrix.getProduct(multiplier1, multiplier2));
 
         Matrix matrix4 = new Matrix(new double[][]{
                 {4, 2, 4, -2},
