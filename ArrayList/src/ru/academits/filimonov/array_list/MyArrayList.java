@@ -190,6 +190,10 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public T get(int index) {
+        if (index < 0){
+            throw new IllegalArgumentException("The index can't be less than 0");
+        }
+
         if (index < length) {
             return items[index];
         }
@@ -199,6 +203,10 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public T set(int index, T element) {
+        if (index < 0){
+            throw new IllegalArgumentException("The index can't be less than 0");
+        }
+
         if (index < length) {
             T oldElement = items[index];
 
@@ -214,6 +222,10 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public void add(int index, T element) {
+        if (index < 0){
+            throw new IllegalArgumentException("The index can't be less than 0");
+        }
+
         if (length >= items.length) {
             increaseCapacity();
         }
@@ -230,6 +242,10 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
+        if (index < 0){
+            throw new IllegalArgumentException("The index can't be less than 0");
+        }
+
         if (index < length) {
             T oldElement = items[length];
 
