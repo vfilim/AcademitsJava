@@ -6,9 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class Test {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         MyArrayList<String> list = new MyArrayList<>(Arrays.asList("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"));
-
 
         System.out.println("The list size is " + list.size());
         System.out.println("Is list empty? " + list.isEmpty());
@@ -17,7 +16,7 @@ public class Test {
 
         list.remove("five");
 
-        for (String element : list){
+        for (String element : list) {
             System.out.println(element);
         }
 

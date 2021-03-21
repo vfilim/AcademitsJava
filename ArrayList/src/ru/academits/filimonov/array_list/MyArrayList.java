@@ -14,7 +14,7 @@ public class MyArrayList<T> implements List<T> {
         items = (T[]) new Object[10];
     }
 
-    public MyArrayList(Collection<? extends T> list){
+    public MyArrayList(Collection<? extends T> list) {
         length = 0;
         modCount = 0;
 
@@ -83,16 +83,16 @@ public class MyArrayList<T> implements List<T> {
         items = Arrays.copyOf(items, items.length * 2);
     }
 
-    public void ensureCapacity(int capacity){
-        if (capacity < length){
+    public void ensureCapacity(int capacity) {
+        if (capacity < length) {
             throw new IllegalArgumentException("The list capacity can't be less than its current length");
         }
 
         items = Arrays.copyOf(items, capacity);
     }
 
-    public void trimToSize(int size){
-        if (size < length){
+    public void trimToSize(int size) {
+        if (size < length) {
             throw new IllegalArgumentException("The new list size can't be less than its current length");
         }
 
@@ -219,7 +219,7 @@ public class MyArrayList<T> implements List<T> {
         }
 
         if (index <= length) {
-            System.arraycopy(items,index, items, index + 1, length - index - 1);
+            System.arraycopy(items, index, items, index + 1, length - index - 1);
 
             items[index] = element;
 
