@@ -1,4 +1,4 @@
-package ru.academits.filimonov.matrixMain;
+package ru.academits.filimonov.matrix_main;
 
 import ru.academits.filimonov.matrix.Matrix;
 import ru.academits.filimonov.vector.Vector;
@@ -11,15 +11,14 @@ public class Test {
 
         matrix1.transpose();
 
-        System.out.println(matrix1);
+        System.out.println("The first matrix is " + matrix1);
 
         Vector vector1 = new Vector(1.0, 5.0, 8.0);
         Vector vector2 = new Vector(7.0, 9.0, 10.0, 3.0);
 
         Matrix matrix2 = new Matrix(vector1, vector2);
 
-
-        System.out.println(matrix2);
+        System.out.println("The second matrix is " + matrix2);
 
         Matrix matrix3 = new Matrix(new double[][]{
                 {1, 2, 3},
@@ -27,9 +26,11 @@ public class Test {
                 {7, 8, 9}
         });
 
+        System.out.println("The third matrix is " + matrix2);
+
         Vector vectorMultiplication = matrix3.multiplyByVector(vector1);
 
-        System.out.println(vectorMultiplication);
+        System.out.println("The product of third matrix and vector multiplication is " + vectorMultiplication);
 
         Matrix multiplier1 = new Matrix(new double[][]{
                 {1, 2, 3},
@@ -41,7 +42,7 @@ public class Test {
                 {15, 16, 17, 18}
         });
 
-        System.out.println(Matrix.getProduct(multiplier1, multiplier2));
+        System.out.println("The product of two matrix multipliers is " + Matrix.getProduct(multiplier1, multiplier2));
 
         Matrix matrix4 = new Matrix(new double[][]{
                 {4, 2, 4, -2},
@@ -50,6 +51,6 @@ public class Test {
                 {1, 9, 4, 2}
         });
 
-        System.out.println(matrix4.getDeterminant());
+        System.out.println("The determinant of fourth matrix is " + matrix4.getDeterminant());
     }
 }
