@@ -16,9 +16,7 @@ public class Test {
 
         list.remove("five");
 
-        for (String element : list) {
-            System.out.println(element);
-        }
+        System.out.println(list.toString());
 
         Collection<String> collection1 = Arrays.asList("three", "seven", "twenty");
         Collection<String> collection2 = Arrays.asList("three", "seven", "six");
