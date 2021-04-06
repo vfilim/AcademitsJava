@@ -49,13 +49,11 @@ public class Matrix {
         }
 
         for (int i = 0; i < numbers.length; i++) {
-            rows[i] = new Vector(columnsCount);
-
             if (numbers[i].length == 0) {
-                continue;
+                rows[i] = new Vector(columnsCount);
             }
 
-            rows[i].add(new Vector(numbers[i]));
+            rows[i] = new Vector(columnsCount, numbers[i]);
         }
     }
 
@@ -100,7 +98,7 @@ public class Matrix {
 
     public void setRow(int index, Vector row) {
         if (row.getSize() != getColumnsCount()) {
-            throw new IllegalArgumentException("The new row length " + row.getLength() + " can't be different from old one's length " + getColumnsCount());
+            throw new IllegalArgumentException("The new row length " + row.getSize() + " can't be different from old one's length " + getColumnsCount());
         }
 
         if (index < 0 || index >= rows.length) {
@@ -111,12 +109,8 @@ public class Matrix {
     }
 
     public Vector getColumn(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("The index can't be < 0 (it is " + index + ")");
-        }
-
-        if (index > getColumnsCount() - 1) {
-            throw new IndexOutOfBoundsException("The index " + index + " can't be equal to or bigger than columns count " + getColumnsCount());
+        if (index < 0 || index >= getColumnsCount()) {
+            throw new IndexOutOfBoundsException("The column index " + index + " can't be less than 0 or be more or equal to matrix columns count " + getColumnsCount());
         }
 
         Vector column = new Vector(rows.length);
@@ -220,10 +214,7 @@ public class Matrix {
     }
 
     public void add(Matrix matrix) {
-        if (rows.length != matrix.rows.length || getColumnsCount() != matrix.getColumnsCount()) {
-            throw new IllegalArgumentException("The matrices sizes must be the same. They are (" + rows.length
-                    + ", " + getColumnsCount() + ") and (" + matrix.rows.length + ", " + getColumnsCount());
-        }
+        checkMatricesSizesEquality(this, matrix);
 
         for (int i = 0; i < rows.length; i++) {
             rows[i].add(matrix.rows[i]);
@@ -231,10 +222,7 @@ public class Matrix {
     }
 
     public void subtract(Matrix matrix) {
-        if (rows.length != matrix.rows.length || getColumnsCount() != matrix.getColumnsCount()) {
-            throw new IllegalArgumentException("The matrices sizes must be the same. They are (" + rows.length
-                    + ", " + getColumnsCount() + ") and (" + matrix.rows.length + ", " + getColumnsCount());
-        }
+        checkMatricesSizesEquality(this, matrix);
 
         for (int i = 0; i < rows.length; i++) {
             rows[i].subtract(matrix.rows[i]);
@@ -267,8 +255,8 @@ public class Matrix {
         }
 
         if (matrix1.rows.length != matrix2.rows.length || matrix1.getColumnsCount() != matrix2.getColumnsCount()) {
-            throw new IllegalArgumentException(String.format("The matrices must have the same sizes, they are %dx%d and %dx%d now.",
-                    matrix1.rows.length, matrix1.rows[1].getSize(), matrix2.rows.length, matrix2.rows[1].getSize()
+            throw new IllegalArgumentException(String.format("The matrices must have the same sizes, they are %dx%d and %dx%d now",
+                    matrix1.rows.length, matrix1.getColumnsCount(), matrix2.rows.length, matrix2.getColumnsCount()
             ));
         }
     }
