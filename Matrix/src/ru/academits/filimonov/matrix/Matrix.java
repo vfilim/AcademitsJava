@@ -49,10 +49,6 @@ public class Matrix {
         }
 
         for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i].length == 0) {
-                rows[i] = new Vector(columnsCount);
-            }
-
             rows[i] = new Vector(columnsCount, numbers[i]);
         }
     }
