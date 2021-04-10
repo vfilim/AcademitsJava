@@ -48,11 +48,11 @@ public class Graph {
 
     public boolean areNodesConnected(int firstNodeIndex, int secondNodeIndex) {
         if (firstNodeIndex < 0 || firstNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index "+ firstNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
+            throw new IndexOutOfBoundsException("The node index " + firstNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
         }
 
         if (secondNodeIndex < 0 || secondNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index "+ secondNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
+            throw new IndexOutOfBoundsException("The node index " + secondNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
         }
 
         return connections[firstNodeIndex][secondNodeIndex];
@@ -60,11 +60,11 @@ public class Graph {
 
     public void setConnection(int firstNodeIndex, int secondNodeIndex, boolean areConnected) {
         if (firstNodeIndex < 0 || firstNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index "+ firstNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
+            throw new IndexOutOfBoundsException("The node index " + firstNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
         }
 
         if (secondNodeIndex < 0 || secondNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index "+ secondNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
+            throw new IndexOutOfBoundsException("The node index " + secondNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
         }
 
         connections[firstNodeIndex][secondNodeIndex] = areConnected;
@@ -73,7 +73,7 @@ public class Graph {
 
     public boolean isNodeVisited(int nodeIndex) {
         if (nodeIndex < 0 || nodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index "+ nodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
+            throw new IndexOutOfBoundsException("The node index " + nodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
         }
 
         return visitedNodes[nodeIndex];
@@ -81,7 +81,7 @@ public class Graph {
 
     private void setNodeVisited(int nodeIndex) {
         if (nodeIndex < 0 || nodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index "+ nodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
+            throw new IndexOutOfBoundsException("The node index " + nodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
         }
 
         visitedNodes[nodeIndex] = true;
@@ -93,7 +93,7 @@ public class Graph {
         for (int nodeIndex = 0; nodeIndex < nodesCount; nodeIndex++) {
             queue.add(nodeIndex);
 
-            while (!queue.isEmpty()){
+            while (!queue.isEmpty()) {
                 int polledIndex = queue.poll();
 
                 if (visitedNodes[polledIndex]) {
@@ -104,12 +104,12 @@ public class Graph {
 
                 visitedNodes[polledIndex] = true;
 
-                for (int j = 0; j < nodesCount; j++){
-                    if (j == polledIndex){
+                for (int j = 0; j < nodesCount; j++) {
+                    if (j == polledIndex) {
                         continue;
                     }
 
-                    if (connections[polledIndex][j]){
+                    if (connections[polledIndex][j]) {
                         queue.add(j);
                     }
                 }
@@ -127,7 +127,7 @@ public class Graph {
 
             stack.push(nodeIndex);
 
-            while (!stack.isEmpty()){
+            while (!stack.isEmpty()) {
                 int poppedIndex = stack.pop();
 
                 if (visitedNodes[poppedIndex]) {
@@ -138,12 +138,12 @@ public class Graph {
 
                 visitedNodes[poppedIndex] = true;
 
-                for (int j = 0; j < nodesCount; j++){
-                    if (j == poppedIndex){
+                for (int j = 0; j < nodesCount; j++) {
+                    if (j == poppedIndex) {
                         continue;
                     }
 
-                    if (connections[poppedIndex][j]){
+                    if (connections[poppedIndex][j]) {
                         stack.push(j);
                     }
                 }
@@ -151,8 +151,8 @@ public class Graph {
         }
     }
 
-    public void eraseVisits(){
-        for (int i = 0; i < nodesCount; i++){
+    public void eraseVisits() {
+        for (int i = 0; i < nodesCount; i++) {
             visitedNodes[i] = false;
         }
     }
