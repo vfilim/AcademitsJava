@@ -5,14 +5,13 @@ import ru.academits.filimonov.graph.Graph;
 public class Test {
     public static void main(String[] args) {
         boolean[][] connections = {
-                {false, false, false, false, false, false, false, false},
-                {false, false, true, false, false, false, false, false},
-                {false, true, false, true, false, true, true, false},
-                {false, false, true, false, true, false, false, true},
-                {false, false, false, true, false, false, false, false},
-                {false, false, true, false, false, false, true, false},
-                {false, false, true, false, false, true, false, true},
-                {false, false, false, true, false, false, true, false},
+                {false, true, false, false, false, false, false},
+                {true, false, false, true, true, true, false},
+                {false, false, false, true, false, false, true},
+                {false, true, true, false, false, false, false},
+                {false, true, false, false, false, true, false},
+                {false, true, false, false, true, false, true},
+                {false, false, true, false, false, true, false},
         };
 
         Graph graph = new Graph(connections);
