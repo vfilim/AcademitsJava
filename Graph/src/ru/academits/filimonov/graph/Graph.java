@@ -5,21 +5,10 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class Graph {
-    private int nodesCount;
+    private final int nodesCount;
 
-    private boolean[][] connections;
-    private boolean[] visitedNodes;
-
-    public Graph(int nodesCount) {
-        if (nodesCount < 2) {
-            throw new IllegalArgumentException("The graph must have at least 2 nodes");
-        }
-
-        this.nodesCount = nodesCount;
-
-        connections = new boolean[nodesCount][nodesCount];
-        visitedNodes = new boolean[nodesCount];
-    }
+    private final boolean[][] connections;
+    private final boolean[] visitedNodes;
 
     public Graph(boolean[][] connections) {
         if (connections.length < 2) {
@@ -44,47 +33,6 @@ public class Graph {
 
         nodesCount = connections.length;
         visitedNodes = new boolean[nodesCount];
-    }
-
-    public boolean areNodesConnected(int firstNodeIndex, int secondNodeIndex) {
-        if (firstNodeIndex < 0 || firstNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index " + firstNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
-        }
-
-        if (secondNodeIndex < 0 || secondNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index " + secondNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
-        }
-
-        return connections[firstNodeIndex][secondNodeIndex];
-    }
-
-    public void setConnection(int firstNodeIndex, int secondNodeIndex, boolean areConnected) {
-        if (firstNodeIndex < 0 || firstNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index " + firstNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
-        }
-
-        if (secondNodeIndex < 0 || secondNodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index " + secondNodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
-        }
-
-        connections[firstNodeIndex][secondNodeIndex] = areConnected;
-        connections[secondNodeIndex][firstNodeIndex] = areConnected;
-    }
-
-    public boolean isNodeVisited(int nodeIndex) {
-        if (nodeIndex < 0 || nodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index " + nodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
-        }
-
-        return visitedNodes[nodeIndex];
-    }
-
-    private void setNodeVisited(int nodeIndex) {
-        if (nodeIndex < 0 || nodeIndex > nodesCount - 1) {
-            throw new IndexOutOfBoundsException("The node index " + nodeIndex + " can't be less than 0 and bigger than " + (nodesCount - 1));
-        }
-
-        visitedNodes[nodeIndex] = true;
     }
 
     public void walkInWidth() {
