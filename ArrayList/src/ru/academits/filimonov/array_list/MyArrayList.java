@@ -6,23 +6,24 @@ public class MyArrayList<T> implements List<T> {
     private int size;
     private T[] items;
     private int modCount;
+    private static final int initialCapacity = 10;
 
     @SuppressWarnings("unchecked")
     public MyArrayList() {
-        items = (T[]) new Object[10];
+        items = (T[]) new Object[initialCapacity];
     }
 
-    @SuppressWarnings("unchecked")
     public MyArrayList(int capacity) {
         if (capacity < 0) {
             throw new IllegalArgumentException("The capacity (" + capacity + ") can't be less than 0");
         }
 
+        //noinspection unchecked
         items = (T[]) new Object[capacity];
     }
 
-    @SuppressWarnings("unchecked")
     public MyArrayList(Collection<? extends T> collection) {
+        //noinspection unchecked
         items = (T[]) new Object[collection.size()];
 
         addAll(collection);
@@ -54,9 +55,22 @@ public class MyArrayList<T> implements List<T> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <E> E[] toArray(E[] wantedTypeArray) {
-        return (E[]) Arrays.copyOf(items, size);
+    public <E> E[] toArray(E[] targetArray) {
+        if (size > targetArray.length) {
+            //noinspection unchecked
+            return (E[]) Arrays.copyOf(items, size, targetArray.getClass());
+        }
+
+        for (int i = 0; i < size; i++) {
+            //noinspection unchecked
+            targetArray[i] = (E) items[i];
+        }
+
+        if (size < targetArray.length) {
+            targetArray[size] = null;
+        }
+
+        return targetArray;
     }
 
     @Override
@@ -84,10 +98,10 @@ public class MyArrayList<T> implements List<T> {
         size++;
     }
 
-    @SuppressWarnings("unchecked")
     private void increaseCapacity() {
         if (items.length == 0) {
-            items = (T[]) new Object[10];
+            //noinspection unchecked
+            items = (T[]) new Object[initialCapacity];
 
             return;
         }
@@ -102,7 +116,7 @@ public class MyArrayList<T> implements List<T> {
     }
 
     public void trimToSize() {
-        if (size > items.length) {
+        if (size < items.length) {
             items = Arrays.copyOf(items, size);
         }
     }
@@ -151,9 +165,7 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        addAll(size, c);
-
-        return true;
+        return addAll(size, c);
     }
 
     @Override
@@ -168,9 +180,7 @@ public class MyArrayList<T> implements List<T> {
 
         int collectionSize = c.size();
 
-        if (items.length < size + collectionSize) {
-            ensureCapacity(size + collectionSize);
-        }
+        ensureCapacity(size + collectionSize);
 
         System.arraycopy(items, index, items, index + collectionSize, size - index);
 
@@ -179,9 +189,10 @@ public class MyArrayList<T> implements List<T> {
         for (T e : c) {
             items[currentIndex] = e;
 
-            size++;
             currentIndex++;
         }
+
+        size += c.size();
 
         modCount++;
 
@@ -232,7 +243,10 @@ public class MyArrayList<T> implements List<T> {
             items[i] = null;
         }
 
-        modCount++;
+        if (size != 0) {
+            modCount++;
+        }
+
         size = 0;
     }
 
@@ -323,15 +337,6 @@ public class MyArrayList<T> implements List<T> {
 
             return items[currentIndex];
         }
-
-        @Override
-        public void remove() {
-            if (savedModCount != modCount) {
-                throw new ConcurrentModificationException("The list has changed, the new iterator is needed");
-            }
-
-            MyArrayList.this.remove(currentIndex);
-        }
     }
 
     public String toString() {
@@ -339,18 +344,18 @@ public class MyArrayList<T> implements List<T> {
             return "[]";
         }
 
-        StringBuilder listItemsSequence = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-        listItemsSequence.append("[");
+        sb.append("[");
 
         for (int i = 0; i < size - 1; i++) {
-            listItemsSequence.append(items[i]);
-            listItemsSequence.append(", ");
+            sb.append(items[i]);
+            sb.append(", ");
         }
 
-        listItemsSequence.append(items[size - 1]);
-        listItemsSequence.append("]");
+        sb.append(items[size - 1]);
+        sb.append("]");
 
-        return listItemsSequence.toString();
+        return sb.toString();
     }
 }
