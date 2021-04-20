@@ -1,54 +1,59 @@
 package ru.academits.filimonov.temperature.view;
 
-import ru.academits.filimonov.temperature.model.GradeType;
-import ru.academits.filimonov.temperature.model.Model;
+import ru.academits.filimonov.temperature.model.Scale;
+import ru.academits.filimonov.temperature.model.ScaleConverterModel;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainWindow {
+    private final ScaleConverterModel model;
+
+    public MainWindow(ScaleConverterModel model) {
+        this.model = model;
+    }
+
     public void run() {
         SwingUtilities.invokeLater(() -> {
-            Model model = new Model();
-
             JFrame mainFrame = new JFrame("Temperature");
 
             mainFrame.setVisible(true);
             mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             mainFrame.setSize(500, 150);
+            mainFrame.setMinimumSize(mainFrame.getSize());
             mainFrame.setLocationRelativeTo(null);
 
-            JPanel inputGradePanel = new JPanel();
-            mainFrame.add(inputGradePanel, BorderLayout.PAGE_START);
+            JPanel inputScalePanel = new JPanel();
+            mainFrame.add(inputScalePanel, BorderLayout.PAGE_START);
 
-            JButton kalvinGradeInput = new JButton("Kelvin");
-            kalvinGradeInput.addActionListener((e) -> model.setInputGradeType(GradeType.KELVIN));
+            JLabel fromLabel = new JLabel("From:");
+            inputScalePanel.add(fromLabel);
 
-            JButton celsiusGradeInput = new JButton("Celsius");
-            celsiusGradeInput.addActionListener((e) -> model.setInputGradeType(GradeType.CELSIUS));
+            ButtonGroup inputScaleGroup = new ButtonGroup();
 
-            JButton fahrenheitGradeInput = new JButton("Fahrenheit");
-            fahrenheitGradeInput.addActionListener((e) -> model.setInputGradeType(GradeType.FAHRENHEIT));
+            for (Scale scale : model.getScalesList()) {
+                JRadioButton scaleButton = new JRadioButton(scale.getName());
+                scaleButton.addActionListener(e -> model.setInputScale(scale));
 
-            inputGradePanel.add(kalvinGradeInput);
-            inputGradePanel.add(celsiusGradeInput);
-            inputGradePanel.add(fahrenheitGradeInput);
+                inputScaleGroup.add(scaleButton);
+                inputScalePanel.add(scaleButton);
+            }
 
-            JPanel outputGradePanel = new JPanel();
-            mainFrame.add(outputGradePanel, BorderLayout.PAGE_END);
+            JPanel outputScalePanel = new JPanel();
+            mainFrame.add(outputScalePanel, BorderLayout.PAGE_END);
 
-            JButton kalvinGradeOutput = new JButton("Kelvin");
-            kalvinGradeOutput.addActionListener((e) -> model.setOutGradeType(GradeType.KELVIN));
+            JLabel outputLabel = new JLabel("To:");
+            outputScalePanel.add(outputLabel);
 
-            JButton celsiusGradeOutput = new JButton("Celsius");
-            celsiusGradeOutput.addActionListener((e) -> model.setOutGradeType(GradeType.CELSIUS));
+            ButtonGroup outputScaleGroup = new ButtonGroup();
 
-            JButton fahrenheitGradeOutput = new JButton("Fahrenheit");
-            fahrenheitGradeOutput.addActionListener((e) -> model.setOutGradeType(GradeType.FAHRENHEIT));
+            for (Scale scale : model.getScalesList()) {
+                JRadioButton scaleButton = new JRadioButton(scale.getName());
+                scaleButton.addActionListener(e -> model.setOutScale(scale));
 
-            outputGradePanel.add(kalvinGradeOutput);
-            outputGradePanel.add(celsiusGradeOutput);
-            outputGradePanel.add(fahrenheitGradeOutput);
+                outputScaleGroup.add(scaleButton);
+                outputScalePanel.add(scaleButton);
+            }
 
             JPanel inputTextPanel = new JPanel();
             mainFrame.add(inputTextPanel, BorderLayout.LINE_START);
@@ -71,7 +76,7 @@ public class MainWindow {
             JButton convertButton = new JButton("convert");
             convertPanel.add(convertButton);
 
-            convertButton.addActionListener((e) -> {
+            convertButton.addActionListener(e -> {
                 try {
                     double output = model.convert(Double.parseDouble(inputText.getText()));
 
