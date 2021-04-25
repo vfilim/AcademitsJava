@@ -12,40 +12,31 @@ public class Test {
 
         System.out.println("Let's walk around in depth:");
 
-        Tree<Integer>.DepthWalker depthWalker = tree.getDepthWalker();
-
-        for (int i = 0; i < tree.getCount(); i++) {
-            depthWalker.moveNext();
-
-            System.out.println(depthWalker.getData());
-        }
+        tree.walkInDepth(System.out::println);
 
         System.out.println("Let's walk around in width:");
 
-        Tree<Integer>.WidthWalker widthWalker = tree.getWidthWalker();
+        tree.walkInWidth(System.out::println);
 
-        for (int i = 0; i < tree.getCount(); i++) {
-            widthWalker.moveNext();
-
-            System.out.println(widthWalker.getData());
-        }
-
-        tree.findNode(9);
+        System.out.println("Does tree contain the element 7? " + tree.findNode(7));
 
         System.out.println("Let's remove element 3 and walk in depth:");
 
         tree.remove(3);
 
-        Tree<Integer>.DepthWalker depthWalker2 = tree.getDepthWalker();
-
-        for (int i = 0; i < tree.getCount(); i++) {
-            depthWalker2.moveNext();
-
-            System.out.println(depthWalker2.getData());
-        }
+        tree.walkInDepth(System.out::println);
 
         System.out.println("Let's walk in depth recursively:");
 
-        tree.walkTreeInDepthRecursively();
+        tree.walkTreeInDepthRecursively(System.out::println);
+
+        Tree<Integer> tree2 = new Tree<>(Arrays.asList(18, 10, 4, 14, 12, 16, 13));
+
+        System.out.println("Let's walk new tree in depth recursively:");
+        tree2.walkInDepth(System.out::println);
+
+        System.out.println("Let's remove 10 and walk again:");
+        tree2.remove(10);
+        tree2.walkInDepth(System.out::println);
     }
 }

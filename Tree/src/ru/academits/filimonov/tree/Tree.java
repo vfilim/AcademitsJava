@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.function.Consumer;
 
-public class Tree<T extends Comparable<T>> {
+public class Tree<T> {
     private TreeNode<T> root;
     private int count;
 
@@ -31,110 +32,130 @@ public class Tree<T extends Comparable<T>> {
         TreeNode<T> currentNode = root;
 
         while (true) {
-            if (data.compareTo(currentNode.getData()) == 0) {
-                System.out.println("The tree has this element (" + data + ") already");
-
-                return;
-            }
-
-            if (data.compareTo(currentNode.getData()) > 0) {
-                if (currentNode.getBiggerChild() == null) {
-                    currentNode.setBiggerChild(new TreeNode<>(data, currentNode));
+            if (data.hashCode() > currentNode.getData().hashCode()) {
+                if (currentNode.getRight() == null) {
+                    currentNode.setRight(new TreeNode<>(data));
 
                     count++;
 
                     return;
                 }
 
-                currentNode = currentNode.getBiggerChild();
+                currentNode = currentNode.getRight();
 
                 continue;
             }
 
-            if (currentNode.getLesserChild() == null) {
-                currentNode.setLesserChild(new TreeNode<>(data, currentNode));
+            if (currentNode.getLeft() == null) {
+                currentNode.setLeft(new TreeNode<>(data));
 
                 count++;
 
                 return;
             }
 
-            currentNode = currentNode.getLesserChild();
+            currentNode = currentNode.getLeft();
         }
     }
 
-    public WidthWalker getWidthWalker() {
-        return new WidthWalker();
+    public boolean findNode(T data) {
+        return findNode(data, x -> {
+        }) != null;
     }
 
-    public DepthWalker getDepthWalker() {
-        return new DepthWalker();
-    }
-
-    public TreeNode<T> findNode(T data) {
+    private TreeNode<T> findNode(T data, Consumer<TreeNode<T>> consumer) {
         if (count == 0) {
-            System.out.println("The tree has no elements");
-
             return null;
         }
 
         TreeNode<T> currentNode = root;
 
         while (true) {
-            if (data.compareTo(currentNode.getData()) == 0) {
-                System.out.println("The tree contains the element " + data);
+            consumer.accept(currentNode);
 
-                return currentNode;
+            int comparingResult = data.hashCode() - currentNode.getData().hashCode();
+
+            if (comparingResult == 0) {
+                return findEqualNodeAmongHashEquals(currentNode, data, consumer);
             }
 
-            if (data.compareTo(currentNode.getData()) > 0) {
-                if (currentNode.getBiggerChild() == null) {
-                    System.out.println("The tree doesn't contain the element " + data);
-
+            if (comparingResult > 0) {
+                if (currentNode.getRight() == null) {
                     return null;
                 }
 
-                currentNode = currentNode.getBiggerChild();
+                currentNode = currentNode.getRight();
 
                 continue;
             }
 
-            if (currentNode.getLesserChild() == null) {
-                System.out.println("The tree doesn't contain the element " + data);
-
+            if (currentNode.getLeft() == null) {
                 return null;
             }
 
-            currentNode = currentNode.getLesserChild();
+            currentNode = currentNode.getLeft();
         }
     }
 
+    private TreeNode<T> findEqualNodeAmongHashEquals(TreeNode<T> equalHashNode, T data, Consumer<TreeNode<T>> consumer) {
+        TreeNode<T> currentNode = equalHashNode;
+
+        while (currentNode.getData().hashCode() == data.hashCode()) {
+            if (data.equals(currentNode.getData())) {
+                return currentNode;
+            }
+
+            if (currentNode.getLeft() != null) {
+                currentNode = currentNode.getLeft();
+                consumer.accept(currentNode);
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
     public boolean remove(T data) {
-        TreeNode<T> dataNode = findNode(data);
+        class NodeWithParent {
+            TreeNode<T> node;
+            TreeNode<T> parent;
+
+            boolean isNodeLeft() {
+                return parent.getData().hashCode() > node.getData().hashCode();
+            }
+        }
+
+        NodeWithParent dataNodeWithParent = new NodeWithParent();
+
+        TreeNode<T> dataNode = findNode(data, currentNode -> {
+            dataNodeWithParent.parent = dataNodeWithParent.node;
+            dataNodeWithParent.node = currentNode;
+        });
 
         if (dataNode == null) {
             return false;
         }
 
-        if (dataNode.getBiggerChild() == null & dataNode.getLesserChild() == null) {
-            if (isNodeLesserChild(dataNode)) {
-                dataNode.getParent().setLesserChild(null);
+        if (dataNode.getRight() == null && dataNode.getLeft() == null) {
+            if (dataNodeWithParent.isNodeLeft()) {
+                dataNode.setLeft(null);
 
                 return true;
             }
 
-            dataNode.getParent().setBiggerChild(null);
+            dataNode.setRight(null);
 
             count--;
 
             return true;
         }
 
-        if (dataNode.getBiggerChild() == null) {
-            if (isNodeLesserChild(dataNode)) {
-                dataNode.getParent().setLesserChild(dataNode.getLesserChild());
+        if (dataNode.getRight() == null) {
+            if (dataNodeWithParent.isNodeLeft()) {
+                dataNodeWithParent.parent.setLeft(dataNode.getLeft());
             } else {
-                dataNode.getParent().setBiggerChild(dataNode.getLesserChild());
+                dataNodeWithParent.parent.setRight(dataNode.getLeft());
             }
 
             count--;
@@ -142,11 +163,11 @@ public class Tree<T extends Comparable<T>> {
             return true;
         }
 
-        if (dataNode.getLesserChild() == null) {
-            if (isNodeLesserChild(dataNode)) {
-                dataNode.getParent().setLesserChild(dataNode.getBiggerChild());
+        if (dataNode.getLeft() == null) {
+            if (dataNodeWithParent.isNodeLeft()) {
+                dataNodeWithParent.parent.setLeft(dataNode.getRight());
             } else {
-                dataNode.getParent().setBiggerChild(dataNode.getBiggerChild());
+                dataNodeWithParent.parent.setRight(dataNode.getRight());
             }
 
             count--;
@@ -154,28 +175,36 @@ public class Tree<T extends Comparable<T>> {
             return true;
         }
 
-        TreeNode<T> currentNode = dataNode.getBiggerChild();
+        TreeNode<T> currentNode = dataNode.getRight();
 
-        while (currentNode.getLesserChild() != null) {
-            currentNode = currentNode.getLesserChild();
+        NodeWithParent currentNodeWithParent = new NodeWithParent();
+        currentNodeWithParent.node = currentNode;
+        currentNodeWithParent.parent = dataNode;
+
+        while (currentNode.getLeft() != null) {
+            currentNodeWithParent.parent = currentNodeWithParent.node;
+            currentNode = currentNode.getLeft();
+            currentNodeWithParent.node = currentNode;
         }
 
-        if (currentNode.getBiggerChild() != null) {
-            currentNode.getParent().setLesserChild(currentNode.getBiggerChild());
-        }
-
-        currentNode.setLesserChild(dataNode.getLesserChild());
-
-        if (dataNode.getBiggerChild() != currentNode) {
-            currentNode.setBiggerChild(dataNode.getBiggerChild());
-        }
-
-        currentNode.getParent().setLesserChild(null);
-
-        if (isNodeLesserChild(dataNode)) {
-            dataNode.getParent().setLesserChild(currentNode);
+        if (currentNode.getRight() != null) {
+            currentNodeWithParent.parent.setLeft(currentNode.getRight());
         } else {
-            dataNode.getParent().setBiggerChild(currentNode);
+            currentNodeWithParent.parent.setLeft(null);
+        }
+
+        if (dataNode.getRight() != currentNode) {
+            currentNode.setRight(dataNode.getRight());
+        }
+
+        if (dataNode.getLeft() != null) {
+            currentNode.setLeft(dataNode.getLeft());
+        }
+
+        if (dataNodeWithParent.isNodeLeft()) {
+            dataNodeWithParent.parent.setLeft(currentNode);
+        } else {
+            dataNodeWithParent.parent.setRight(currentNode);
         }
 
         count--;
@@ -183,80 +212,66 @@ public class Tree<T extends Comparable<T>> {
         return true;
     }
 
-    public class WidthWalker {
+    public void walkInWidth(Consumer<T> consumer) {
+        if (count == 0) {
+            return;
+        }
+
         TreeNode<T> currentNode;
         Queue<TreeNode<T>> queue = new LinkedList<>();
 
-        private WidthWalker() {
-            queue.add(root);
-        }
+        queue.add(root);
 
-        public void moveNext() {
+        while (!queue.isEmpty()) {
             currentNode = queue.poll();
+            consumer.accept(currentNode.getData());
 
-            putChildren();
-        }
-
-        public T getData() {
-            return currentNode.getData();
-        }
-
-        private void putChildren() {
-            if (currentNode.getLesserChild() != null) {
-                queue.add(currentNode.getLesserChild());
+            if (currentNode.getLeft() != null) {
+                queue.add(currentNode.getLeft());
             }
 
-            if (currentNode.getBiggerChild() != null) {
-                queue.add(currentNode.getBiggerChild());
+            if (currentNode.getRight() != null) {
+                queue.add(currentNode.getRight());
             }
         }
     }
 
-    public class DepthWalker {
+    public void walkInDepth(Consumer<T> consumer) {
+        if (count == 0) {
+            return;
+        }
+
         TreeNode<T> currentNode;
         Stack<TreeNode<T>> stack = new Stack<>();
 
-        private DepthWalker() {
-            stack.push(root);
-        }
+        stack.push(root);
 
-        public void moveNext() {
+        while (!stack.isEmpty()) {
             currentNode = stack.pop();
+            consumer.accept(currentNode.getData());
 
-            pushChildren();
-        }
-
-        public T getData() {
-            return currentNode.getData();
-        }
-
-        private void pushChildren() {
-            if (currentNode.getBiggerChild() != null) {
-                stack.push(currentNode.getBiggerChild());
+            if (currentNode.getRight() != null) {
+                stack.push(currentNode.getRight());
             }
 
-            if (currentNode.getLesserChild() != null) {
-                stack.push(currentNode.getLesserChild());
+            if (currentNode.getLeft() != null) {
+                stack.push(currentNode.getLeft());
             }
         }
     }
 
-    private boolean isNodeLesserChild(TreeNode<T> node) {
-        return node.getData().compareTo(node.getParent().getData()) < 0;
+    public void walkTreeInDepthRecursively(Consumer<T> consumer) {
+        walkInDepthRecursively(root, consumer);
     }
 
-    public void walkTreeInDepthRecursively() {
-        walkInDepthRecursively(root);
-    }
-
-    private void walkInDepthRecursively(TreeNode<T> startNode) {
+    private void walkInDepthRecursively(TreeNode<T> startNode, Consumer<T> consumer) {
         if (startNode == null) {
             return;
         }
 
-        System.out.println(startNode.getData());
+        consumer.accept(startNode.getData());
 
-        walkInDepthRecursively(startNode.getLesserChild());
-        walkInDepthRecursively(startNode.getBiggerChild());
+        walkInDepthRecursively(startNode.getLeft(), consumer);
+        walkInDepthRecursively(startNode.getRight(), consumer);
     }
 }

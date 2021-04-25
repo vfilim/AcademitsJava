@@ -1,49 +1,31 @@
 package ru.academits.filimonov.tree;
 
-public class TreeNode<T extends Comparable<T>> {
+public class TreeNode<T> {
     private final T data;
-    private TreeNode<T> parent;
-    private TreeNode<T> lesserChild;
-    private TreeNode<T> biggerChild;
+    private TreeNode<T> left;
+    private TreeNode<T> right;
 
     public TreeNode(T data) {
         this.data = data;
-    }
-
-    public TreeNode(T data, TreeNode<T> parent) {
-        this.data = data;
-        this.parent = parent;
     }
 
     public T getData() {
         return data;
     }
 
-    public TreeNode<T> getLesserChild() {
-        return lesserChild;
+    public TreeNode<T> getLeft() {
+        return left;
     }
 
-    public TreeNode<T> getBiggerChild() {
-        return biggerChild;
+    public TreeNode<T> getRight() {
+        return right;
     }
 
-    public void setLesserChild(TreeNode<T> child) {
-        lesserChild = child;
-
-        if (child != null) {
-            child.parent = this;
-        }
+    public void setLeft(TreeNode<T> child) {
+        left = child;
     }
 
-    public void setBiggerChild(TreeNode<T> child) {
-        biggerChild = child;
-
-        if (child != null) {
-            child.parent = this;
-        }
-    }
-
-    public TreeNode<T> getParent() {
-        return parent;
+    public void setRight(TreeNode<T> child) {
+        right = child;
     }
 }
