@@ -3,14 +3,15 @@ package ru.academits.filimonov.array_list;
 import java.util.*;
 
 public class MyArrayList<T> implements List<T> {
+    private static final int DEFAULT_CAPACITY = 10;
+
     private int size;
     private T[] items;
     private int modCount;
-    private static final int initialCapacity = 10;
 
     @SuppressWarnings("unchecked")
     public MyArrayList() {
-        items = (T[]) new Object[initialCapacity];
+        items = (T[]) new Object[DEFAULT_CAPACITY];
     }
 
     public MyArrayList(int capacity) {
@@ -61,10 +62,10 @@ public class MyArrayList<T> implements List<T> {
             return (E[]) Arrays.copyOf(items, size, targetArray.getClass());
         }
 
-        for (int i = 0; i < size; i++) {
-            //noinspection unchecked
-            targetArray[i] = (E) items[i];
-        }
+        //noinspection unchecked
+        E[] castedArray = (E[]) items;
+
+        System.arraycopy(castedArray, 0, targetArray, 0, size);
 
         if (size < targetArray.length) {
             targetArray[size] = null;
@@ -101,7 +102,7 @@ public class MyArrayList<T> implements List<T> {
     private void increaseCapacity() {
         if (items.length == 0) {
             //noinspection unchecked
-            items = (T[]) new Object[initialCapacity];
+            items = (T[]) new Object[DEFAULT_CAPACITY];
 
             return;
         }
@@ -125,7 +126,7 @@ public class MyArrayList<T> implements List<T> {
     public boolean remove(Object object) {
         int objectIndex = indexOf(object);
 
-        if (indexOf(object) == -1) {
+        if (objectIndex == -1) {
             return false;
         }
 
