@@ -1,17 +1,9 @@
 package ru.academits.filimonov.temperature.model;
 
-public abstract class Scale {
-    private final String name;
+public interface Scale {
+    String getName();
 
-    protected Scale(String name) {
-        this.name = name;
-    }
+    double convertToCelsius(double value);
 
-    public final String getName() {
-        return name;
-    }
-
-    protected abstract double convertToCelsius(double value);
-
-    protected abstract double convertFromCelsius(double value);
+    double convertFromCelsius(double value);
 }

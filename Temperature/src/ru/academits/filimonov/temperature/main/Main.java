@@ -2,6 +2,7 @@ package ru.academits.filimonov.temperature.main;
 
 import ru.academits.filimonov.temperature.model.*;
 import ru.academits.filimonov.temperature.view.MainWindow;
+import ru.academits.filimonov.temperature.view.MyMainWindow;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,7 +12,7 @@ public class Main {
                 new KelvinScale()
         );
 
-        MainWindow mainWindow = new MainWindow(model);
+        MainWindow mainWindow = new MyMainWindow(model);
 
         mainWindow.run();
     }
