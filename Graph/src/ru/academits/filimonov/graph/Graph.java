@@ -23,7 +23,7 @@ public class Graph {
     }
 
     public void walkInWidth(IntConsumer consumer) {
-        final boolean[] visitedNodes = new boolean[connections.length];
+        boolean[] visitedNodes = new boolean[connections.length];
 
         Queue<Integer> queue = new LinkedList<>();
 
@@ -45,9 +45,9 @@ public class Graph {
 
                 visitedNodes[polledIndex] = true;
 
-                for (int j = 0; j < connections.length; j++) {
-                    if (j != polledIndex && connections[polledIndex][j] > 0) {
-                        queue.add(j);
+                for (int i = 0; i < connections.length; i++) {
+                    if (i != polledIndex && connections[polledIndex][i] > 0) {
+                        queue.add(i);
                     }
                 }
             }
@@ -55,7 +55,7 @@ public class Graph {
     }
 
     public void walkInDepth(IntConsumer consumer) {
-        final boolean[] visitedNodes = new boolean[connections.length];
+        boolean[] visitedNodes = new boolean[connections.length];
 
         Deque<Integer> stack = new LinkedList<>();
 
@@ -77,9 +77,9 @@ public class Graph {
 
                 visitedNodes[poppedIndex] = true;
 
-                for (int j = connections.length - 1; j >= 0; j--) {
-                    if (j != poppedIndex && connections[poppedIndex][j] > 0) {
-                        stack.addLast(j);
+                for (int i = connections.length - 1; i >= 0; i--) {
+                    if (i != poppedIndex && connections[poppedIndex][i] > 0) {
+                        stack.addLast(i);
                     }
                 }
             }
@@ -96,9 +96,9 @@ public class Graph {
         visitedNodes[index] = true;
         consumer.accept(index);
 
-        for (int j = 0; j < connections.length; j++) {
-            if (!visitedNodes[j] && connections[index][j] > 0) {
-                walkInDepthRecursively(j, visitedNodes, consumer);
+        for (int i = 0; i < connections.length; i++) {
+            if (!visitedNodes[i] && connections[index][i] > 0) {
+                walkInDepthRecursively(i, visitedNodes, consumer);
             }
         }
     }
