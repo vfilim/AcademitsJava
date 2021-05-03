@@ -1,5 +1,0 @@
-<table>
-<tr><td>1 "</td><td>иван</td><td>иванов</td></tr>
-<tr><td>2</td><td>петр</td><td>петров<br/><br/><br/></td></tr>
-<tr><td>3</td><td>сидоров</td><td>сидор<br/>"сидорович"<br/></td></tr>
-</table>
