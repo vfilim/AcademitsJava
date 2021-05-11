@@ -3,28 +3,27 @@ package ru.academits.filimonov.hash_table;
 import java.util.*;
 
 public class HashTable<T> implements Collection<T> {
-    private final LinkedList<T>[] hashArray;
+    private static final int DEFAULT_ARRAY_LENGTH = 100;
+
+    private final LinkedList<T>[] lists;
     private int size;
     private int modCount;
 
-    @SuppressWarnings("unchecked")
     public HashTable() {
-        final int DEFAULT_ARRAY_LENGTH = 100;
-
-        hashArray = (LinkedList<T>[]) new LinkedList[DEFAULT_ARRAY_LENGTH];
-
-        for (int i = 0; i < hashArray.length; i++) {
-            hashArray[i] = new LinkedList<>();
-        }
+        this(DEFAULT_ARRAY_LENGTH);
     }
 
-    @SuppressWarnings("unchecked")
     public HashTable(int arrayLength) {
-        hashArray = (LinkedList<T>[]) new LinkedList[arrayLength];
-
-        for (int i = 0; i < hashArray.length; i++) {
-            hashArray[i] = new LinkedList<>();
+        if (arrayLength < 1) {
+            throw new IllegalArgumentException("Hash table lists array length can't be lesser than 1, now it is " + arrayLength);
         }
+
+        //noinspection unchecked
+        lists = (LinkedList<T>[]) new LinkedList[arrayLength];
+    }
+
+    private int calculateListIndex(Object o) {
+        return Objects.hashCode(o) % lists.length;
     }
 
     @Override
@@ -39,7 +38,13 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean contains(Object o) {
-        return hashArray[o.hashCode() % hashArray.length].contains(o);
+        int index = calculateListIndex(o);
+
+        if (lists[index] == null) {
+            return false;
+        }
+
+        return lists[calculateListIndex(o)].contains(o);
     }
 
     @Override
@@ -51,12 +56,12 @@ public class HashTable<T> implements Collection<T> {
     public Object[] toArray() {
         Object[] array = new Object[size];
 
-        int offset = 0;
+        int index = 0;
 
-        for (LinkedList<T> list : hashArray) {
-            System.arraycopy(list.toArray(), 0, array, offset, list.size());
+        for (T element : this) {
+            array[index] = element;
 
-            offset += list.size();
+            index++;
         }
 
         return array;
@@ -86,12 +91,24 @@ public class HashTable<T> implements Collection<T> {
         size++;
         modCount++;
 
-        return hashArray[element.hashCode() % hashArray.length].add(element);
+        int index = calculateListIndex(element);
+
+        if (lists[index] == null) {
+            lists[index] = new LinkedList<>();
+        }
+
+        return lists[index].add(element);
     }
 
     @Override
     public boolean remove(Object o) {
-        if (hashArray[o.hashCode() % hashArray.length].remove(o)) {
+        int index = calculateListIndex(o);
+
+        if (lists[index] == null) {
+            return false;
+        }
+
+        if (lists[index].remove(o)) {
             size--;
             modCount++;
 
@@ -140,13 +157,17 @@ public class HashTable<T> implements Collection<T> {
     public boolean retainAll(Collection<?> c) {
         boolean isTableChanged = false;
 
-        HashTableIterator hashTableIterator = new HashTableIterator();
+        for (LinkedList<T> list : lists) {
+            if (list == null) {
+                continue;
+            }
 
-        while (hashTableIterator.hasNext()) {
-            if (!c.contains(hashTableIterator.next())) {
-                hashTableIterator.remove();
+            int savedListSize = list.size();
 
+            if (list.retainAll(c)) {
                 isTableChanged = true;
+
+                size -= savedListSize - list.size();
             }
         }
 
@@ -155,20 +176,21 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public void clear() {
-        for (LinkedList<T> list : hashArray) {
-            list.clear();
+        for (LinkedList<T> list : lists) {
+            if (list != null) {
+                list.clear();
+            }
         }
     }
 
     private class HashTableIterator implements Iterator<T> {
-        private int currentHash;
+        private int currentListIndex;
+        private int currentGeneralIndex;
         private Iterator<T> currentListIterator;
         private final int savedModCount;
 
-        HashTableIterator() {
-            currentHash = 0;
-
-            currentListIterator = hashArray[currentHash].iterator();
+        public HashTableIterator() {
+            currentListIterator = lists[currentListIndex].iterator();
 
             savedModCount = modCount;
         }
@@ -177,28 +199,26 @@ public class HashTable<T> implements Collection<T> {
         public boolean hasNext() {
             checkConcurrentModifications();
 
-            while (currentHash < hashArray.length - 1) {
-                if (currentListIterator.hasNext()) {
-                    return true;
-                }
-
-                currentHash++;
-
-                currentListIterator = hashArray[currentHash].iterator();
-            }
-
-            return currentListIterator.hasNext();
+            return currentGeneralIndex < size();
         }
 
         @Override
         public T next() {
-            checkConcurrentModifications();
+            while (hasNext()) {
+                if (currentListIterator.hasNext()) {
+                    currentGeneralIndex++;
 
-            if (hasNext()) {
-                return currentListIterator.next();
+                    return currentListIterator.next();
+                }
+
+                do {
+                    currentListIndex++;
+                } while (lists[currentListIndex] == null);
+
+                currentListIterator = lists[currentListIndex].iterator();
             }
 
-            return null;
+            throw new NoSuchElementException("The iterator can't get next element, because the collection is over");
         }
 
         private void checkConcurrentModifications() {
@@ -218,12 +238,12 @@ public class HashTable<T> implements Collection<T> {
 
         sb.append("[");
 
-        for (int i = 0; i < hashArray.length - 1; i++) {
-            sb.append(hashArray[i].toString());
+        for (int i = 0; i < lists.length - 1; i++) {
+            sb.append(lists[i]);
             sb.append(", ");
         }
 
-        sb.append(hashArray[hashArray.length - 1].toString());
+        sb.append(lists[lists.length - 1]);
         sb.append("]");
 
         return sb.toString();
