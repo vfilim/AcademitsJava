@@ -181,6 +181,8 @@ public class HashTable<T> implements Collection<T> {
                 list.clear();
             }
         }
+
+        size = 0;
     }
 
     private class HashTableIterator implements Iterator<T> {
