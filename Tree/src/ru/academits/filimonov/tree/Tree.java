@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 public class Tree<T> {
     private TreeNode<T> root;
     private int count;
-    Comparator<T> comparator;
+    private Comparator<T> comparator;
 
     public Tree() {
     }
@@ -45,7 +45,7 @@ public class Tree<T> {
         TreeNode<T> currentNode = root;
 
         while (true) {
-            if (compareData(data, currentNode.getData()) > 0) {
+            if (compareData(data, currentNode.getData()) >= 0) {
                 if (currentNode.getRight() == null) {
                     currentNode.setRight(new TreeNode<>(data));
 
@@ -266,35 +266,38 @@ public class Tree<T> {
         walkInDepthRecursively(startNode.getRight(), consumer);
     }
 
-    private double compareData(T firstData, T secondData) {
+    private double compareData(T data1, T data2) {
         if (comparator != null) {
-            return Objects.compare(firstData, secondData, comparator);
+            return Objects.compare(data1, data2, comparator);
         }
 
-        if (firstData == null && secondData == null) {
+        if (data1 == null && data2 == null) {
             return 0;
         }
 
-        if (firstData != null) {
-            //noinspection unchecked
-            return ((Comparable<T>) firstData).compareTo(firstData);
+        if (data1 == null) {
+            return -1;
+        }
+
+        if (data2 == null) {
+            return 1;
         }
 
         //noinspection unchecked
-        return ((Comparable<T>) secondData).compareTo(secondData);
+        return ((Comparable<T>) data1).compareTo(data2);
     }
 
     private class NodeWithParent {
-        TreeNode<T> node;
-        TreeNode<T> parent;
+        private TreeNode<T> node;
+        private TreeNode<T> parent;
 
         private NodeWithParent(TreeNode<T> node, TreeNode<T> parent) {
             this.node = node;
             this.parent = parent;
         }
 
-        boolean isNodeLeft() {
-            return compareData(parent.getData(), node.getData()) > 0;
+        private boolean isNodeLeft() {
+            return parent.getLeft() == node;
         }
     }
 }
