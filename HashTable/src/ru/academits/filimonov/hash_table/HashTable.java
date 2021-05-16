@@ -22,7 +22,7 @@ public class HashTable<T> implements Collection<T> {
         lists = (LinkedList<T>[]) new LinkedList[arrayLength];
     }
 
-    private int calculateListIndex(Object o) {
+    private int getListIndex(Object o) {
         return Objects.hashCode(o) % lists.length;
     }
 
@@ -38,13 +38,9 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean contains(Object o) {
-        int index = calculateListIndex(o);
+        int index = getListIndex(o);
 
-        if (lists[index] == null) {
-            return false;
-        }
-
-        return lists[calculateListIndex(o)].contains(o);
+        return lists[index] != null && lists[index].contains(o);
     }
 
     @Override
@@ -91,7 +87,7 @@ public class HashTable<T> implements Collection<T> {
         size++;
         modCount++;
 
-        int index = calculateListIndex(element);
+        int index = getListIndex(element);
 
         if (lists[index] == null) {
             lists[index] = new LinkedList<>();
@@ -102,7 +98,7 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public boolean remove(Object o) {
-        int index = calculateListIndex(o);
+        int index = getListIndex(o);
 
         if (lists[index] == null) {
             return false;
@@ -171,17 +167,28 @@ public class HashTable<T> implements Collection<T> {
             }
         }
 
-        return isTableChanged;
+        if (isTableChanged) {
+            modCount++;
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public void clear() {
+        if (size == 0) {
+            return;
+        }
+
         for (LinkedList<T> list : lists) {
             if (list != null) {
                 list.clear();
             }
         }
 
+        modCount++;
         size = 0;
     }
 
@@ -199,14 +206,20 @@ public class HashTable<T> implements Collection<T> {
 
         @Override
         public boolean hasNext() {
-            checkConcurrentModifications();
-
             return currentGeneralIndex < size();
         }
 
         @Override
         public T next() {
-            while (hasNext()) {
+            if (savedModCount != modCount) {
+                throw new ConcurrentModificationException("The hash table has been modified, the new iterator is needed");
+            }
+
+            if (!hasNext()) {
+                throw new NoSuchElementException("The iterator can't get next element, because the collection is over");
+            }
+
+            while (true) {
                 if (currentListIterator.hasNext()) {
                     currentGeneralIndex++;
 
@@ -218,14 +231,6 @@ public class HashTable<T> implements Collection<T> {
                 } while (lists[currentListIndex] == null);
 
                 currentListIterator = lists[currentListIndex].iterator();
-            }
-
-            throw new NoSuchElementException("The iterator can't get next element, because the collection is over");
-        }
-
-        private void checkConcurrentModifications() {
-            if (savedModCount != modCount) {
-                throw new ConcurrentModificationException("The hash table has been modified, the new iterator is needed");
             }
         }
 
