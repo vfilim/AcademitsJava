@@ -199,9 +199,17 @@ public class HashTable<T> implements Collection<T> {
         private final int savedModCount;
 
         public HashTableIterator() {
-            currentListIterator = lists[currentListIndex].iterator();
-
             savedModCount = modCount;
+
+            if (size == 0) {
+                return;
+            }
+
+            while (lists[currentListIndex] == null) {
+                currentListIndex++;
+            }
+
+            currentListIterator = lists[currentListIndex].iterator();
         }
 
         @Override
@@ -235,6 +243,10 @@ public class HashTable<T> implements Collection<T> {
         }
 
         public void remove() {
+            if (currentListIterator == null) {
+                throw new IllegalStateException("It is impossible to remove an element because the iterator doesn't point at any element");
+            }
+
             currentListIterator.remove();
             size--;
         }
